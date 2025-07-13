@@ -18,14 +18,14 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
+import useCreateQuestion from '@/http/use-create-question';
 
-// Esquema de validação no mesmo arquivo conforme solicitado
 const createQuestionSchema = z.object({
   question: z
     .string()
-    .min(1, 'Pergunta é obrigatória')
-    .min(10, 'Pergunta deve ter pelo menos 10 caracteres')
-    .max(500, 'Pergunta deve ter menos de 500 caracteres'),
+    .min(1, 'Question required')
+    .min(10, 'Question must be at least 10 characters')
+    .max(500, 'Question must be less than 500 characters'),
 });
 
 type CreateQuestionFormData = z.infer<typeof createQuestionSchema>;
@@ -35,6 +35,8 @@ interface QuestionFormProps {
 }
 
 export function QuestionForm({ roomId }: QuestionFormProps) {
+  const { mutateAsync: createQuestion } = useCreateQuestion(roomId);
+
   const form = useForm<CreateQuestionFormData>({
     resolver: zodResolver(createQuestionSchema),
     defaultValues: {
@@ -42,10 +44,13 @@ export function QuestionForm({ roomId }: QuestionFormProps) {
     },
   });
 
-  function handleCreateQuestion(data: CreateQuestionFormData) {
-    // biome-ignore lint/suspicious/noConsole: dev
-    console.log(data, roomId);
+  async function handleCreateQuestion(data: CreateQuestionFormData) {
+    await createQuestion(data);
+
+    form.reset();
   }
+
+  const { isSubmitting } = form.formState;
 
   return (
     <Card>
@@ -70,6 +75,7 @@ export function QuestionForm({ roomId }: QuestionFormProps) {
                   <FormControl>
                     <Textarea
                       className="min-h-[100px]"
+                      disabled={isSubmitting}
                       placeholder="What would you like to know?"
                       {...field}
                     />
@@ -79,7 +85,9 @@ export function QuestionForm({ roomId }: QuestionFormProps) {
               )}
             />
 
-            <Button type="submit">Send question</Button>
+            <Button disabled={isSubmitting} type="submit">
+              Send question
+            </Button>
           </form>
         </Form>
       </CardContent>
