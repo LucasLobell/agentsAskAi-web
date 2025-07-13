@@ -2,7 +2,7 @@
 
 This is the frontend application for **NLW Agents**, built with React 19 and modern development tools. Provides a complete Q&A platform with AI-powered answers, audio recording capabilities, and room management.
 
-> 📖 **See the [main README](../README.md) for complete project overview and setup instructions.**
+> 📖 **See the [main project](https://github.com/LucasLobell/agentsAskAi) for complete project overview and setup instructions.**
 
 ## 🚀 Tech Stack
 
